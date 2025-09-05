@@ -3,231 +3,196 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Zahid 💖 Krishna</title>
+  <title>Photo Gallery</title>
   <style>
     body {
       margin: 0;
-      height: 100vh;
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      padding: 20px;
+      font-family: Arial, sans-serif;
       background: linear-gradient(120deg, #ff9a9e, #fad0c4);
       display: flex;
       justify-content: center;
       align-items: center;
-      overflow: hidden;
-      position: relative;
+      flex-direction: column;
     }
 
-    /* Central message box */
-    .center-box {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: rgba(255, 255, 255, 0.9);
-      color: #333;
-      padding: 20px 30px;
-      border-radius: 15px;
-      text-align: center;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-      z-index: 10;
-      max-width: 80%;
-    }
-
-    .center-box h1 {
-      font-size: 1.8em;
-      margin-bottom: 15px;
-      animation: pulse 1.5s infinite;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
-
-    .center-box button {
-      padding: 8px 16px;
-      font-size: 1em;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      background-color: #ff6f91;
-      color: white;
-      transition: transform 0.2s;
-    }
-
-    .center-box button:hover {
-      transform: scale(1.1);
-    }
-
-    /* Photo cards (smaller now) */
-    .photo-card {
-      position: absolute;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-      cursor: grab;
-      width: 10vw;
-      height: 13vw;
-      min-width: 80px;
-      min-height: 100px;
-      z-index: 6;
-    }
-
-    .photo-card img {
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 15px;
       width: 100%;
-      height: 100%;
+      max-width: 1000px;
+      z-index: 2;
+    }
+
+    .gallery img {
+      width: 100%;
+      height: 180px;
       object-fit: cover;
-      display: block;
-      pointer-events: none;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: transform 0.3s, box-shadow 0.3s;
+      cursor: pointer;
     }
 
-    /* Floating hearts background */
+    .gallery img:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    }
+
+    /* Floating hearts */
     .hearts {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       pointer-events: none;
+      z-index: 0;
       overflow: hidden;
-      z-index: 1;
     }
-
     .heart {
       position: absolute;
+      color: rgba(255, 0, 100, 0.6);
       font-size: 20px;
       animation: floatUp 6s linear infinite;
-      opacity: 0.8;
     }
-
     @keyframes floatUp {
       0% { transform: translateY(100vh) scale(0.8); opacity: 1; }
       100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
     }
 
-    /* Responsive */
-    @media (max-width: 768px) {
-      .center-box {
-        padding: 15px 20px;
-        font-size: 0.9em;
-      }
-      .center-box h1 {
-        font-size: 1.5em;
-      }
+    /* Love Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 10;
+      left: 0; top: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    @media (max-width: 480px) {
-      .center-box h1 {
-        font-size: 1.2em;
-      }
-      .center-box button {
-        font-size: 0.9em;
-        padding: 6px 12px;
-      }
+    .modal-content {
+      background: #fff;
+      padding: 20px 30px;
+      border-radius: 15px;
+      text-align: center;
+      max-width: 400px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+      animation: pop 0.4s ease;
+    }
+
+    .modal-content h2 {
+      color: #ff4f81;
+      margin-bottom: 10px;
+    }
+
+    .close-btn {
+      background: #ff4f81;
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0.7); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
     }
   </style>
 </head>
 <body>
-  <!-- Floating hearts container -->
+
+  <!-- Background music -->
+  <audio autoplay loop>
+    <source src="img/Lovely-Song.mp3" type="audio/mpeg">
+    Your browser does not support audio.
+  </audio>
+
+  <!-- Floating Hearts -->
   <div class="hearts"></div>
 
-  <!-- Central box -->
-  <div class="center-box">
-    <h1 id="message">I love you 💖</h1>
-    <button onclick="changeMessage()">Click me for a surprise</button>
+  <!-- Gallery -->
+  <div class="gallery">
+    <img src="img/1.jpg" alt="Memory 1" onclick="showMessage(0)">
+    <img src="img/2.jpg" alt="Memory 2" onclick="showMessage(1)">
+    <img src="img/3.jpg" alt="Memory 3" onclick="showMessage(2)">
+    <img src="img/4.jpg" alt="Memory 4" onclick="showMessage(3)">
+    <img src="img/5.jpg" alt="Memory 5" onclick="showMessage(4)">
+    <img src="img/6.jpg" alt="Memory 6" onclick="showMessage(5)">
+    <img src="img/7.jpg" alt="Memory 7" onclick="showMessage(6)">
+    <img src="img/8.jpg" alt="Memory 8" onclick="showMessage(7)">
+    <img src="img/9.jpg" alt="Memory 9" onclick="showMessage(8)">
+    <img src="img/10.jpg" alt="Memory 10" onclick="showMessage(9)">
+    <img src="img/11.jpg" alt="Memory 11" onclick="showMessage(10)">
+    <img src="img/12.jpg" alt="Memory 12" onclick="showMessage(11)">
+    <img src="img/13.jpg" alt="Memory 13" onclick="showMessage(12)">
+    <img src="img/14.jpg" alt="Memory 14" onclick="showMessage(13)">
+    <img src="img/15.jpg" alt="Memory 15" onclick="showMessage(14)">
+    <img src="img/16.jpg" alt="Memory 16" onclick="showMessage(15)">
+    <img src="img/17.jpg" alt="Memory 17" onclick="showMessage(16)">
+    <img src="img/18.jpg" alt="Memory 18" onclick="showMessage(17)">
+    <img src="img/19.png" alt="Memory 19" onclick="showMessage(18)">
+    <img src="img/20.jpg" alt="Memory 20" onclick="showMessage(19)">
   </div>
 
-  <!-- 9 draggable photo cards -->
-  <div class="photo-card" style="top:5%; left:8%;"><img src="img/1.jpg" alt="Memory 1"></div>
-  <div class="photo-card" style="top:10%; right:10%;"><img src="img/2.jpg" alt="Memory 2"></div>
-  <div class="photo-card" style="top:35%; left:5%;"><img src="img/3.jpg" alt="Memory 3"></div>
-  <div class="photo-card" style="top:40%; right:8%;"><img src="img/4.jpg" alt="Memory 4"></div>
-  <div class="photo-card" style="bottom:15%; left:12%;"><img src="img/5.jpg" alt="Memory 5"></div>
-  <div class="photo-card" style="bottom:20%; right:12%;"><img src="img/6.jpg" alt="Memory 6"></div>
-  <div class="photo-card" style="bottom:8%; left:30%;"><img src="img/7.jpg" alt="Memory 7"></div>
-  <div class="photo-card" style="bottom:10%; right:30%;"><img src="img/8.jpg" alt="Memory 8"></div>
-  <div class="photo-card" style="top:50%; left:50%; transform:translate(-200%, 120%);"><img src="img/9.jpg" alt="Memory 9"></div>
+  <!-- Modal -->
+  <div id="loveModal" class="modal">
+    <div class="modal-content">
+      <h2>💖 Love For My Love 💖</h2>
+      <p id="loveText"></p>
+      <button class="close-btn" onclick="closeModal()">Close</button>
+    </div>
+  </div>
 
   <script>
-    const messages = [
+    const loveMessages = [
       "You are my sunshine ☀️",
-      "Forever and always ❤️",
-      "You complete me 💕",
-      "My heart is yours 💖",
-      "You make me smile every day 😊",
-      "I’m lucky to have you 🌎",
-      "With you, life feels perfect ✨",
-      "My love grows stronger every day 🌹"
+      "Forever in my heart ❤️",
+      "Every moment with you is magical ✨",
+      "You make me the happiest 💕",
+      "My love grows stronger every day 🌹",
+      "I’m so lucky to have you 💖",
+      "You complete my world 🌎",
+      "You are my soulmate 💑",
+      "I fall in love with you every day 😘",
+      "My heart belongs to you 💞",
+      "Together, we are unstoppable 💫",
+      "Your smile lights up my soul 🌸",
+      "You’re my forever and always 💍",
+      "No distance can break us 💌",
+      "You are my sweetest memory 🍯",
+      "You make my heart skip a beat 💓",
+      "My love story begins and ends with you 📖",
+      "You are the reason I believe in love 🌈",
+      "I promise to love you endlessly ♾️",
+      "With you, life feels perfect 🥰"
     ];
 
-    // Different colored hearts
-    const heartTypes = ["💖", "❤️", "💕", "💜", "💙", "💛"];
-
-    function changeMessage() {
-      const randomIndex = Math.floor(Math.random() * messages.length);
-      document.getElementById('message').textContent = messages[randomIndex];
-      createHeart();
+    function showMessage(index) {
+      document.getElementById("loveText").innerText = loveMessages[index];
+      document.getElementById("loveModal").style.display = "flex";
     }
 
-    function createHeart() {
+    function closeModal() {
+      document.getElementById("loveModal").style.display = "none";
+    }
+
+    // Floating hearts background
+    const heartsContainer = document.querySelector('.hearts');
+    setInterval(() => {
       const heart = document.createElement('div');
       heart.classList.add('heart');
-      heart.textContent = heartTypes[Math.floor(Math.random() * heartTypes.length)];
-      heart.style.left = Math.random() * 100 + 'vw';
-      heart.style.fontSize = Math.random() * 25 + 15 + 'px';
+      heart.innerText = "❤";
+      heart.style.left = Math.random() * 100 + "vw";
+      heart.style.fontSize = (15 + Math.random() * 20) + "px";
       heart.style.animationDuration = (4 + Math.random() * 4) + "s";
-      document.querySelector('.hearts').appendChild(heart);
+      heartsContainer.appendChild(heart);
       setTimeout(() => heart.remove(), 7000);
-    }
-
-    // Continuous background hearts
-    setInterval(createHeart, 800);
-
-    // Make photo cards draggable
-    const cards = document.querySelectorAll('.photo-card');
-
-    cards.forEach(card => {
-      let offsetX, offsetY, isDragging = false;
-
-      // For mouse
-      card.addEventListener('mousedown', e => {
-        isDragging = true;
-        offsetX = e.clientX - card.offsetLeft;
-        offsetY = e.clientY - card.offsetTop;
-        card.style.cursor = "grabbing";
-      });
-
-      document.addEventListener('mousemove', e => {
-        if (!isDragging) return;
-        card.style.left = (e.clientX - offsetX) + "px";
-        card.style.top = (e.clientY - offsetY) + "px";
-      });
-
-      document.addEventListener('mouseup', () => {
-        isDragging = false;
-        card.style.cursor = "grab";
-      });
-
-      // For touch (mobile)
-      card.addEventListener('touchstart', e => {
-        isDragging = true;
-        const touch = e.touches[0];
-        offsetX = touch.clientX - card.offsetLeft;
-        offsetY = touch.clientY - card.offsetTop;
-      });
-
-      card.addEventListener('touchmove', e => {
-        if (!isDragging) return;
-        const touch = e.touches[0];
-        card.style.left = (touch.clientX - offsetX) + "px";
-        card.style.top = (touch.clientY - offsetY) + "px";
-      });
-
-      card.addEventListener('touchend', () => {
-        isDragging = false;
-      });
-    });
+    }, 800);
   </script>
 </body>
 </html>
