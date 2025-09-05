@@ -14,11 +14,13 @@
       justify-content: center;
       align-items: center;
       flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
     .gallery {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(4, 1fr); /* default desktop */
       gap: 15px;
       width: 100%;
       max-width: 1000px;
@@ -38,6 +40,22 @@
     .gallery img:hover {
       transform: scale(1.05);
       box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    }
+
+    /* Responsive breakpoints */
+    @media (max-width: 992px) {
+      .gallery {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .gallery {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .gallery img {
+        height: 150px;
+      }
     }
 
     /* Floating hearts */
@@ -106,12 +124,6 @@
 </head>
 <body>
 
-  <!-- Background music -->
-  <audio autoplay loop>
-    <source src="img/Lovely-Song.mp3" type="audio/mpeg">
-    Your browser does not support audio.
-  </audio>
-
   <!-- Floating Hearts -->
   <div class="hearts"></div>
 
@@ -142,13 +154,30 @@
   <!-- Modal -->
   <div id="loveModal" class="modal">
     <div class="modal-content">
-      <h2>💖 Love For My Love 💖</h2>
+      <h2>💖 Love Message 💖</h2>
       <p id="loveText"></p>
       <button class="close-btn" onclick="closeModal()">Close</button>
     </div>
   </div>
 
-  <script>
+  <!-- Music Player -->
+<div class="music-player" style="margin:20px 0; z-index:5;">
+  <audio id="bg-music" controls loop>
+    <source src="img/Lovely-Song.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+  </audio>
+</div>
+
+<script>
+  // Try autoplay after first user interaction
+  document.addEventListener("click", function () {
+    const music = document.getElementById("bg-music");
+    if (music.paused) {
+      music.play().catch(err => console.log("Autoplay blocked:", err));
+    }
+  }, { once: true });
+
+
     const loveMessages = [
       "You are my sunshine ☀️",
       "Forever in my heart ❤️",
